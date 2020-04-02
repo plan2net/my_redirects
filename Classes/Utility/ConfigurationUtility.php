@@ -46,8 +46,21 @@ class ConfigurationUtility
         }
         // Fallback on default configuration
         $configuration = static::getConfiguration();
+        
+        $domain = static::getDomainService()->getDomainByDomainName(GeneralUtility::getIndpEnv('HTTP_HOST'));
+        if ($domain && isset($domain['pid'])){
+            return $domain['pid'];
+        }
 
         return (int)($configuration['defaultRootPageId'] ?: ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1));
+    }
+    
+    /**
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService|object
+     */
+    protected static function getDomainService()
+    {
+        return GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
     }
 
     /**
